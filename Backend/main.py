@@ -7,6 +7,8 @@ from urllib.parse import urlencode
 import json
 import pytesseract
 from PIL import Image
+from pydantic import BaseModel
+
 
 # Load the .env file
 load_dotenv()
@@ -15,12 +17,13 @@ load_dotenv()
 # API_KEY = os.getenv('APP_ID')
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "Worlds"}
 
-@app.get("/test")
-async def read_item():
+@app.get("/test/")
+async def read_item(currentType: str, translateType: str, price: float):
     baseURL ='https://openexchangerates.org/api/latest.json'
     base = 'USD'
     access_key = os.getenv('APP_ID')
@@ -31,12 +34,15 @@ async def read_item():
 
     # Construct the full URL with the parameters
     url = f"{baseURL}?{urlencode(params)}"
-
+    url = url.replace('+%23+currency+API', "")
+    
+    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
     # Make the request
     response = requests.get(url)
     if response.status_code != 200:
         return {'error': 'Failed to fetch data'}
-    return response.json()
+    return (float(price) / float(response.json().get('rates').get(currentType)))
+    
 
 
 @app.get("/item/{item}")
@@ -49,18 +55,18 @@ def retrieve_item(item: str):
     
     return filtered_products
 
-# Pytesseract (Image to text)
-image_input = "backend/public/avocado_oil.jpeg"
-price_tag = Image.open(image_input)
+# # Pytesseract (Image to text)
+# image_input = "backend/public/avocado_oil.jpeg"
+# price_tag = Image.open(image_input)
 
-grayscale_image = price_tag.convert("L")
-threshold_value = 150 
-binary_image = grayscale_image.point(
-    lambda x: 0 if x < threshold_value else 255, '1')
-resized_image = binary_image.resize((price_tag.width * 11, price_tag.height * 11))
+# grayscale_image = price_tag.convert("L")
+# threshold_value = 150 
+# binary_image = grayscale_image.point(
+#     lambda x: 0 if x < threshold_value else 255, '1')
+# resized_image = binary_image.resize((price_tag.width * 11, price_tag.height * 11))
 
-text = pytesseract.image_to_string(resized_image, config='--psm 11')
-print(text)
+# text = pytesseract.image_to_string(resized_image, config='--psm 11')
+# print(text)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)

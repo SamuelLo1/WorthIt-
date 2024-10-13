@@ -12,12 +12,8 @@ const CurrencySelector = () => {
     { label: 'British Pound (GBP)', value: 'GBP' },
     { label: 'Japanese Yen (JPY)', value: 'JPY' },
     { label: 'Canadian Dollar (CAD)', value: 'CAD' },
-    { label: 'Australian Dollar (AUD)', value: 'AUD' },
-    { label: 'Swiss Franc (CHF)', value: 'CHF' },
     { label: 'Chinese Yuan (CNY)', value: 'CNY' },
-    { label: 'Indian Rupee (INR)', value: 'INR' },
-    { label: 'Mexican Peso (MXN)', value: 'MXN' },
-    // Add more currencies as needed
+    { label: 'Polish Zloty (PLN)', value: 'PLN' },
   ];
 
   return (

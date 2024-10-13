@@ -1,11 +1,45 @@
 'use client'
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import CurrencySelector  from "@/components/currencyDropdown";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Index() {
-  const [price, setPrice] = useState('');
+  const [currentType, setcurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
+  const [translateType, setTranslateType] = useState(''); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
+  const [price, setPrice] = useState(0);
   const [itemName, setItemName] = useState('');
+  const access_key = process.env.APP_ID
+
+    // send price for price conversion with (price, currentType, translateType)
+    // send item name to look up in store api
+    const fetchData = async (currentType: string, price: number, translateType: string) => {
+        try {
+          // Construct the URL with query parameters
+          const query = new URLSearchParams({
+            currentType,
+            translateType,
+            price: price.toString(), // Convert number to string for query parameters
+          }).toString();
+      
+          const response = await fetch(`http://127.0.0.1:8000/test/?${query}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+      
+          const data = await response.json();
+          console.log("Response data:", data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      
+
+
+  const handleSubmit = () => {
+    fetchData(currentType, price, translateType); 
+  }
   return (
     <View
       className="flex-col items-center justify-center bg-gray-100 w-full"
@@ -43,6 +77,7 @@ export default function Index() {
 
       <TouchableOpacity
         className="bg-blue-500 p-2 rounded-lg"
+        onPress={handleSubmit}
       > 
         <Text className="text-white text-xl font-bold">Check Worth!</Text>
       </TouchableOpacity>
