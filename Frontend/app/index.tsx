@@ -1,14 +1,14 @@
 'use client'
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import CurrencySelector  from "@/components/currencyDropdown";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-export default function Index() {
+
+export default function Home({ navigation }) {
   const [currentType, setcurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [translateType, setTranslateType] = useState(''); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [price, setPrice] = useState(0);
   const [itemName, setItemName] = useState('');
-  const access_key = process.env.APP_ID
 
     // send price for price conversion with (price, currentType, translateType)
     // send item name to look up in store api
@@ -38,7 +38,8 @@ export default function Index() {
 
 
   const handleSubmit = () => {
-    fetchData(currentType, price, translateType); 
+    fetchData(currentType, price, translateType);
+    navigation.navigate('priceRes'); 
   }
   return (
     <View

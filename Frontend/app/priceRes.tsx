@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const priceRes = () => {
+const PriceRes = () => {
   return (
     <View>
       <Text>priceRes</Text>
@@ -9,6 +9,6 @@ const priceRes = () => {
   )
 }
 
-export default priceRes
+export default PriceRes
 
 const styles = StyleSheet.create({})

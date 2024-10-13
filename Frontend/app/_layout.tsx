@@ -1,9 +1,15 @@
-import { Stack } from "expo-router";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './index';
+import PriceRes from "./priceRes";
+
+const Stack = createNativeStackNavigator();
 
 export default function RootLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
+    <Stack.Navigator initialRouteName="index">
+      <Stack.Screen name="index" component={Home}/>
+      <Stack.Screen name="priceRes" component={PriceRes} />
+    </Stack.Navigator>
   );
 }
