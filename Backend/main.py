@@ -37,10 +37,10 @@ async def read_item():
     url = f"{baseURL}?{urlencode(params)}"
 
     # Make the request
-    response = requests.get(url)
-    if response.status_code != 200:
-        return {'error': 'Failed to fetch data'}
-    return response.json()
+    # response = requests.get(url)
+    # if response.status_code != 200:
+    #     return {'error': 'Failed to fetch data'}
+    return {url}
 
 
 @app.get("/item/{item}")
