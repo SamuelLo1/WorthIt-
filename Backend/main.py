@@ -60,6 +60,10 @@ class ImageData(BaseModel):
 @app.post("/upload-base64/")
 async def process_image(image_data: ImageData):
     try:
+        # Checking if the image starts with "data:image/" to remove the header
+        if image_data.image.startswith("data:image/"):
+            image_data.image = image_data.image.split(",")[1]
+        
         # Decode the base64 image data
         image_bytes = base64.b64decode(image_data.image)
         image = Image.open(BytesIO(image_bytes))
@@ -68,7 +72,7 @@ async def process_image(image_data: ImageData):
         grayscale_image = image.convert("L")
         threshold_value = 150
         binary_image = grayscale_image.point(lambda x: 0 if x < threshold_value else 255, '1')
-        resized_image = binary_image.resize((image.width * 2, image.height * 2))
+        resized_image = binary_image.resize((image.width * 8, image.height * 8))
 
         # Use pytesseract to extract text from the image
         text = pytesseract.image_to_string(resized_image, config='--psm 11')
