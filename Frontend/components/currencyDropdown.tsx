@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, SafeAreaView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-
 
 const CurrencySelector = () => {
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
@@ -12,16 +11,12 @@ const CurrencySelector = () => {
     { label: 'British Pound (GBP)', value: 'GBP' },
     { label: 'Japanese Yen (JPY)', value: 'JPY' },
     { label: 'Canadian Dollar (CAD)', value: 'CAD' },
-    { label: 'Australian Dollar (AUD)', value: 'AUD' },
-    { label: 'Swiss Franc (CHF)', value: 'CHF' },
     { label: 'Chinese Yuan (CNY)', value: 'CNY' },
-    { label: 'Indian Rupee (INR)', value: 'INR' },
-    { label: 'Mexican Peso (MXN)', value: 'MXN' },
-    // Add more currencies as needed
+    { label: 'Polish Zloty (PLN)', value: 'PLN' },
   ];
 
   return (
-    <View className='flex-1 justify-center items-center bg-gray-100'>
+    <SafeAreaView className='flex-1 justify-center items-center bg-gray-100'>
       <Text className='text-lg mb-2 text-gray-800'>Select Currency</Text>
       <View className='w-1/2 bg-white border border-gray-300 rounded-lg'>
         <Picker
@@ -41,7 +36,7 @@ const CurrencySelector = () => {
       <Text className='text-md mt-4 text-gray-600'>
         Selected Currency: {selectedCurrency}
       </Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

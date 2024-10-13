@@ -19,12 +19,13 @@ load_dotenv()
 # API_KEY = os.getenv('APP_ID')
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "Worlds"}
 
-@app.get("/test")
-async def read_item():
+@app.get("/test/")
+async def read_item(currentType: str, translateType: str, price: float):
     baseURL ='https://openexchangerates.org/api/latest.json'
     base = 'USD'
     access_key = os.getenv('APP_ID')
@@ -35,12 +36,15 @@ async def read_item():
 
     # Construct the full URL with the parameters
     url = f"{baseURL}?{urlencode(params)}"
-
+    url = url.replace('+%23+currency+API', "")
+    
+    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
     # Make the request
-    # response = requests.get(url)
-    # if response.status_code != 200:
-    #     return {'error': 'Failed to fetch data'}
-    return {url}
+    response = requests.get(url)
+    if response.status_code != 200:
+        return {'error': 'Failed to fetch data'}
+    return (float(price) / float(response.json().get('rates').get(currentType)))
+    
 
 
 @app.get("/item/{item}")
