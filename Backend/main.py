@@ -27,10 +27,11 @@ def read_root():
 @app.get("/test/")
 async def read_item(currentType: str, translateType: str, price: str):
     baseURL ='https://openexchangerates.org/api/latest.json'
-    base = 'USD'
+    base = 'USD' # other currency rates require a pay wall
     access_key = os.getenv('APP_ID')
     params = {
         "app_id": access_key,  # The API key
+        "base": base,  # The base currency
         "symbols": "EUR,GBP,CAD,PLN,JPY,CNY"  # The currency symbols to fetch
     }
 

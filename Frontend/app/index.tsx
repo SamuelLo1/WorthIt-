@@ -28,7 +28,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
       const query = new URLSearchParams({
         currentType,
         translateType,
-        price: price.toString(), // Convert number to string for query parameters
+        price, // Convert number to string for query parameters
       }).toString();
 
       const response = await fetch(`http://127.0.0.1:8000/test/?${query}`, {
