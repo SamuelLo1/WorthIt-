@@ -15,7 +15,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'index'>;
 
 const Home: React.FC<Props> = ({ navigation }) => {
   const [currentType, setCurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
-  const [translateType, setTranslateType] = useState('USD'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
+  const [translateType, setTranslateType] = useState('GBP'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [price, setPrice] = useState('0');
   const [itemName, setItemName] = useState('');
 

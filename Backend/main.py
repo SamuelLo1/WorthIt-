@@ -44,7 +44,12 @@ async def read_item(currentType: str, translateType: str, price: str):
     response = requests.get(url)
     if response.status_code != 200:
         return {'error': 'Failed to fetch data'}
-    return str(float(price) / float(response.json().get('rates').get(currentType)))
+    
+    #perform calculation: get currentType to USD, then multiply that by the translateType
+    if translateType != 'USD':
+        return str((float(price) / float(response.json().get('rates').get(currentType))) * float(response.json().get('rates').get(translateType)))
+    else: 
+        return str(float(price) / float(response.json().get('rates').get(currentType)))
     
 
 
