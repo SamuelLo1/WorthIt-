@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RootStackParamList } from "@/types/pageParams";
 
-type RootStackParamList  = {
-  Home: undefined; 
-  conversionPrice: number, translateType: string, currentType: string };
-
-type Props = NativeStackScreenProps<RootStackParamList, 'conversionPrice'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'priceRes'>;
 const PriceRes: React.FC<Props> = ({ route }) => {
   const { conversionPrice, translateType, currentType } = route.params;
   return (

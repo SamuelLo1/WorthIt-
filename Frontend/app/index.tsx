@@ -3,24 +3,26 @@ import { Text, View, TextInput, TouchableOpacity, Button } from "react-native";
 import CurrencySelector from "@/components/currencyDropdown";
 import { useState } from "react";
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useRouter } from "expo-router";
+import { RootStackParamList } from "@/types/pageParams";
 
-type RootStackParamList = {
-    Home: undefined;
-    resPrice: { conversionPrice: number, translateType: string, currentType: string };
-}; // Define the parameter types
-
-type Props = NativeStackScreenProps<RootStackParamList, 'resPrice'>;
+/*
+TODO: 
+ - Change the Go To Test Screen to touchable opacity
+ - add currency Selector for currentType and translateType
+*/
+//Each page "Home and priceRes will have expected props"
+type Props = NativeStackScreenProps<RootStackParamList, 'index'>;
 
 const Home: React.FC<Props> = ({ navigation }) => {
   const [currentType, setCurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [translateType, setTranslateType] = useState('USD'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState('0');
   const [itemName, setItemName] = useState('');
+
 
   // send price for price conversion with (price, currentType, translateType)
   // send item name to look up in store api
-  const fetchData = async (currentType: string, price: number, translateType: string) => {
+  const fetchData = async (currentType: string, price: string, translateType: string) => {
     try {
       // Construct the URL with query parameters
       const query = new URLSearchParams({
@@ -44,9 +46,9 @@ const Home: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    const convertedCurr: number = await fetchData(currentType, price, translateType);
+    const convertedCurr: string = await fetchData(currentType, price, translateType);
     if (convertedCurr) {
-      navigation.navigate('resPrice', {
+      navigation.navigate('priceRes', {
         conversionPrice: convertedCurr,
         translateType: translateType,
         currentType: currentType
@@ -62,15 +64,14 @@ const Home: React.FC<Props> = ({ navigation }) => {
 
   return (
     <View
-      className="flex-col items-center justify-center bg-gray-100 w-full"
+      className="flex-col space-y-3 items-center justify-center bg-gray-100 w-full"
       style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
     >
-      <Text>Welcome to the Home Screen</Text>
       <Button
         title="Go to Test Screen"
-        onPress={() => router.push("/test")} // Navigate to Test Screen
+        onPress={()=> {navigation.navigate('test')}} // Navigate to Test Screen
       />
-      <Text className="flex-1 items-center justify-center text-2xl text-blue-500">
+      <Text className="items-center justify-center text-2xl text-blue-500">
         Worth It
       </Text>
       <View className="border-2 border-gray-200 rounded-lg p-4 w-full space-y-4">
@@ -98,7 +99,7 @@ const Home: React.FC<Props> = ({ navigation }) => {
       >
         <Text className="text-white text-xl font-bold">Check Worth!</Text>
       </TouchableOpacity>
-      <CurrencySelector />
+      
     </View>
   );
 };

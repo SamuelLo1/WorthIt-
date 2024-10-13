@@ -25,7 +25,7 @@ def read_root():
     return {"Hello": "Worlds"}
 
 @app.get("/test/")
-async def read_item(currentType: str, translateType: str, price: float):
+async def read_item(currentType: str, translateType: str, price: str):
     baseURL ='https://openexchangerates.org/api/latest.json'
     base = 'USD'
     access_key = os.getenv('APP_ID')
@@ -43,7 +43,7 @@ async def read_item(currentType: str, translateType: str, price: float):
     response = requests.get(url)
     if response.status_code != 200:
         return {'error': 'Failed to fetch data'}
-    return (float(price) / float(response.json().get('rates').get(currentType)))
+    return str(float(price) / float(response.json().get('rates').get(currentType)))
     
 
 

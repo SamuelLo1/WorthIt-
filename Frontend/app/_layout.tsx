@@ -3,8 +3,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './index';
 import PriceRes from "./priceRes";
 import TestScreen from "./test";
+import { RootStackParamList } from "@/types/pageParams";
 
-const Stack = createNativeStackNavigator();
+//Each route has props expected from RootStackParamList
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootLayout() {
   return (
