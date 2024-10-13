@@ -18,8 +18,14 @@ load_dotenv()
 # Access the environment variable
 # API_KEY = os.getenv('APP_ID')
 app = FastAPI()
-
-
+from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 @app.get("/")
 def read_root():
     return {"Hello": "Worlds"}
@@ -63,6 +69,7 @@ class ImageData(BaseModel):
 
 @app.post("/upload-base64/")
 async def process_image(image_data: ImageData):
+    print("trigged image endpoint")
     try:
         # Checking if the image starts with "data:image/" to remove the header
         if image_data.image.startswith("data:image/"):

@@ -56,6 +56,27 @@ export default function TestScreen() {
     }
   };
 
+  const fetchImgText = async (base64Image: string) => {
+    console.log("Sending image to server...");
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/upload-base64`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: base64Image }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log("Response:", data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Button title="Pick an image from camera roll" onPress={pickImage} />
@@ -67,7 +88,11 @@ export default function TestScreen() {
         </Text> // Display first 100 characters of base64
       )}
       <Button title="Clear" onPress={() => setImage(null)} />
-      <Button title="Upload" />
+      <Button
+        title="Process Image"
+        onPress={() => base64Image && fetchImgText(base64Image)}
+        disabled={!base64Image}
+      />
     </View>
   );
 }
