@@ -2,11 +2,17 @@
 import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import CurrencySelector  from "@/components/currencyDropdown";
 import { useState } from "react";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+
+type RootStackParamList = {
+    Home: undefined;
+    resPrice: {conversionPrice: number, translateType: string, currentType: string  }}; // Define the parameter types
+type Props = NativeStackScreenProps<RootStackParamList, 'resPrice'>;
 
 export default function Home({ navigation }) {
   const [currentType, setcurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
-  const [translateType, setTranslateType] = useState(''); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
+  const [translateType, setTranslateType] = useState('USD'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [price, setPrice] = useState(0);
   const [itemName, setItemName] = useState('');
 
@@ -29,7 +35,7 @@ export default function Home({ navigation }) {
           });
       
           const data = await response.json();
-          console.log("Response data:", data);
+          return data; 
         } catch (error) {
           console.error("Error fetching data:", error);
         }
@@ -37,9 +43,18 @@ export default function Home({ navigation }) {
       
 
 
-  const handleSubmit = () => {
-    fetchData(currentType, price, translateType);
-    navigation.navigate('priceRes'); 
+  const  handleSubmit = async () => {
+    const convertedCurr : number = await fetchData(currentType, price, translateType);
+    if (convertedCurr){
+        navigation.navigate('priceRes', {
+            conversionPrice: convertedCurr,
+            translateType: translateType,
+            currentType: currentType
+        });
+    } 
+    else {
+        return <View> <Text> Error </Text> </View>
+    }
   }
   return (
     <View
