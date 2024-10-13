@@ -30,8 +30,8 @@ app.add_middleware(
 def read_root():
     return {"Hello": "Worlds"}
 
-@app.get("/test")
-async def read_item():
+@app.get("/test/")
+async def read_item(currentType: str, translateType: str, price: float):
     baseURL ='https://openexchangerates.org/api/latest.json'
     base = 'USD'
     access_key = os.getenv('APP_ID')
@@ -42,12 +42,14 @@ async def read_item():
 
     # Construct the full URL with the parameters
     url = f"{baseURL}?{urlencode(params)}"
-
+    url = url.replace('+%23+currency+API', "")
+    
+    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
     # Make the request
-    # response = requests.get(url)
-    # if response.status_code != 200:
-    #     return {'error': 'Failed to fetch data'}
-    return {url}
+    response = requests.get(url)
+    if response.status_code != 200:
+        return {'error': 'Failed to fetch data'}
+    return (float(price) / float(response.json().get('rates').get(currentType)))
 
 
 @app.get("/item/{item}")
@@ -62,18 +64,20 @@ def retrieve_item(item: str):
 
 # Pytesseract (Image to text)
 class ImageData(BaseModel):
-    image: str  # Base64-encoded image
+    base64Image: str
 
-@app.post("/upload-base64/")
+@app.post("/upload-base64")
 async def process_image(image_data: ImageData):
-    print("trigged image endpoint")
+    print("Triggered image endpoint")
+    # Access the base64Image from the JSON body
+    #return {"received_image": image_data.base64Image[0:10]}
     try:
         # Checking if the image starts with "data:image/" to remove the header
-        if image_data.image.startswith("data:image/"):
-            image_data.image = image_data.image.split(",")[1]
+        if image_data.base64Image.startswith("data:image/"):
+            image_data.base64Image = image_data.base64Image.split(",")[1]
         
         # Decode the base64 image data
-        image_bytes = base64.b64decode(image_data.image)
+        image_bytes = base64.b64decode(image_data.base64Image)
         image = Image.open(BytesIO(image_bytes))
 
         # Convert image to grayscale and resize it for better OCR
