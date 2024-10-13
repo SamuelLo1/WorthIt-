@@ -56,16 +56,41 @@ export default function TestScreen() {
     }
   };
 
+  type RootStackParamList = {
+    Home: undefined;
+    resPrice: {
+      conversionPrice: number;
+      translateType: string;
+      currentType: string;
+    };
+  };
   const fetchImgText = async (base64Image: string) => {
     console.log("Sending image to server...");
+    const query = new URLSearchParams({
+      image_data: base64Image,
+    }).toString();
+
     try {
       const response = await fetch(`http://127.0.0.1:8000/upload-base64`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ image: base64Image }),
+        body: JSON.stringify({ base64Image }),
       });
+
+      //   const query = new URLSearchParams({
+      //     currentType: "JPY",
+      //     translateType: "USD",
+      //     price: "1000",
+      //   }).toString();
+
+      //   const response = await fetch(`http://127.0.0.1:8000/test/?${query}`, {
+      //     method: "GET",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -88,6 +113,11 @@ export default function TestScreen() {
         </Text> // Display first 100 characters of base64
       )}
       <Button title="Clear" onPress={() => setImage(null)} />
+      <Button
+        title="Process Image"
+        onPress={() => base64Image && fetchImgText(base64Image)}
+        disabled={!base64Image}
+      />
       <Button
         title="Process Image"
         onPress={() => base64Image && fetchImgText(base64Image)}

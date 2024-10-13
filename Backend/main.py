@@ -25,6 +25,13 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],  # Allows all methods
     allow_headers=["*"],  # Allows all headers
+)from fastapi.middleware.cors import CORSMiddleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
 )
 @app.get("/")
 def read_root():
@@ -42,6 +49,9 @@ async def read_item(currentType: str, translateType: str, price: str):
 
     # Construct the full URL with the parameters
     url = f"{baseURL}?{urlencode(params)}"
+    url = url.replace('+%23+currency+API', "")
+    
+    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
     url = url.replace('+%23+currency+API', "")
     
     # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
@@ -65,18 +75,18 @@ def retrieve_item(item: str):
 
 # Pytesseract (Image to text)
 class ImageData(BaseModel):
-    image: str  # Base64-encoded image
+    base64Image: str
 
-@app.post("/upload-base64/")
+@app.post("/upload-base64")
 async def process_image(image_data: ImageData):
     print("trigged image endpoint")
     try:
         # Checking if the image starts with "data:image/" to remove the header
-        if image_data.image.startswith("data:image/"):
-            image_data.image = image_data.image.split(",")[1]
+        if image_data.base64Image.startswith("data:image/"):
+            image_data.base64Image = image_data.base64Image.split(",")[1]
         
         # Decode the base64 image data
-        image_bytes = base64.b64decode(image_data.image)
+        image_bytes = base64.b64decode(image_data.base64Image)
         image = Image.open(BytesIO(image_bytes))
 
         # Convert image to grayscale and resize it for better OCR
