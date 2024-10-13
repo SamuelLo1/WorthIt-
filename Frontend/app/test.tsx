@@ -118,11 +118,6 @@ export default function TestScreen() {
         onPress={() => base64Image && fetchImgText(base64Image)}
         disabled={!base64Image}
       />
-      <Button
-        title="Process Image"
-        onPress={() => base64Image && fetchImgText(base64Image)}
-        disabled={!base64Image}
-      />
     </View>
   );
 }
