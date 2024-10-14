@@ -47,9 +47,11 @@ async def read_item(currentType: str, translateType: str, price: str):
     
     #perform calculation: get currentType to USD, then multiply that by the translateType
     if translateType != 'USD':
-        return str((float(price) / float(response.json().get('rates').get(currentType))) * float(response.json().get('rates').get(translateType)))
+        convertedPrice = format((float(price) / float(response.json().get('rates').get(currentType))) * float(response.json().get('rates').get(translateType)), ".2f") #format to 2 decimal places
+        return str(convertedPrice)
     else: 
-        return str(float(price) / float(response.json().get('rates').get(currentType)))
+        convertedPrice = format(float(price) / float(response.json().get('rates').get(currentType)), ".2f") #format to 2 decimal places
+        return str(convertedPrice)
     
 
 

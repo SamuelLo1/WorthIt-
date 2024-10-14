@@ -1,14 +1,17 @@
 "use client";
 import { Text, View, TextInput, TouchableOpacity, Button } from "react-native";
-import CurrencySelector from "@/components/currencyDropdown";
 import { useState } from "react";
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from "@/types/pageParams";
+import CurrencySelector from "@/components/currencyDropdown";
 
 /*
 TODO: 
  - Change the Go To Test Screen to touchable opacity
  - add currency Selector for currentType and translateType
+ - since we are using gemini we can push its limits: 
+ - provide a breif description if item is worth based on typical cost of item in currentType region vs translateType region 
+ - provide similar items that are potentially cheaper alternatives
 */
 //Each page "Home and priceRes will have expected props"
 type Props = NativeStackScreenProps<RootStackParamList, 'index'>;
@@ -51,7 +54,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
       navigation.navigate('priceRes', {
         conversionPrice: convertedCurr,
         translateType: translateType,
-        currentType: currentType
+        currentType: currentType,
+        prevPrice: price,
       });
     } else {
       return (
@@ -99,6 +103,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
       >
         <Text className="text-white text-xl font-bold">Check Worth!</Text>
       </TouchableOpacity>
+
+      <CurrencySelector/>
       
     </View>
   );

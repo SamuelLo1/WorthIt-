@@ -1,43 +1,37 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { StyleSheet, Text, View } from 'react-native';
+import { Dropdown } from 'react-native-material-dropdown';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const CurrencySelector = () => {
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [isFocus, setIsFocus] = useState(false);
 
-  const currencies = [
-    { label: 'US Dollar (USD)', value: 'USD' },
-    { label: 'Euro (EUR)', value: 'EUR' },
-    { label: 'British Pound (GBP)', value: 'GBP' },
-    { label: 'Japanese Yen (JPY)', value: 'JPY' },
-    { label: 'Canadian Dollar (CAD)', value: 'CAD' },
-    { label: 'Chinese Yuan (CNY)', value: 'CNY' },
-    { label: 'Polish Zloty (PLN)', value: 'PLN' },
+  const data = [
+    { value: 'USD' },
+    { value: 'EUR' },
+    { value: 'GBP' },
   ];
 
   return (
-    <SafeAreaView className='flex-1 justify-center items-center bg-gray-100'>
-      <Text className='text-lg mb-2 text-gray-800'>Select Currency</Text>
-      <View className='w-1/2 bg-white border border-gray-300 rounded-lg'>
-        <Picker
-          selectedValue={selectedCurrency}
-          onValueChange={(itemValue) => setSelectedCurrency(itemValue)}
-          className="h-12"
-        >
-          {currencies.map((currency) => (
-            <Picker.Item 
-              key={currency.value} 
-              label={currency.label} 
-              value={currency.value} 
-            />
-          ))}
-        </Picker>
-      </View>
-      <Text className='text-md mt-4 text-gray-600'>
-        Selected Currency: {selectedCurrency}
-      </Text>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Dropdown
+        label='Select Currency'
+        data={data}
+        value={selectedCurrency}
+        onChangeText={(value) => setSelectedCurrency(value)}
+        onFocus={() => setIsFocus(true)}
+        onBlur={() => setIsFocus(false)}
+      />
+      <AntDesign name="down" size={24} color="black" />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+});
 
 export default CurrencySelector;
