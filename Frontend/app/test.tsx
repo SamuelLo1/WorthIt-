@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Image, View, StyleSheet, Text } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
-
+import CurrencySelector from "@/components/currencyDropdown";
 export default function TestScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [base64Image, setBase64Image] = useState<string | null>(null);
@@ -79,19 +79,6 @@ export default function TestScreen() {
         body: JSON.stringify({ base64Image }),
       });
 
-      //   const query = new URLSearchParams({
-      //     currentType: "JPY",
-      //     translateType: "USD",
-      //     price: "1000",
-      //   }).toString();
-
-      //   const response = await fetch(`http://127.0.0.1:8000/test/?${query}`, {
-      //     method: "GET",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //   });
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -118,6 +105,7 @@ export default function TestScreen() {
         onPress={() => base64Image && fetchImgText(base64Image)}
         disabled={!base64Image}
       />
+      <CurrencySelector />
     </View>
   );
 }
