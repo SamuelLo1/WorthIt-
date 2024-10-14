@@ -104,7 +104,6 @@ const Home: React.FC<Props> = ({ navigation }) => {
         <Text className="text-white text-xl font-bold">Check Worth!</Text>
       </TouchableOpacity>
 
-      <CurrencySelector/>
       
     </View>
   );
