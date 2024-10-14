@@ -33,10 +33,11 @@ def read_root():
 @app.get("/test/")
 async def read_item(currentType: str, translateType: str, price: str):
     baseURL ='https://openexchangerates.org/api/latest.json'
-    base = 'USD'
+    base = 'USD' # other currency rates require a pay wall
     access_key = os.getenv('APP_ID')
     params = {
         "app_id": access_key,  # The API key
+        "base": base,  # The base currency
         "symbols": "EUR,GBP,CAD,PLN,JPY,CNY"  # The currency symbols to fetch
     }
 
@@ -52,7 +53,14 @@ async def read_item(currentType: str, translateType: str, price: str):
     response = requests.get(url)
     if response.status_code != 200:
         return {'error': 'Failed to fetch data'}
-    return str(float(price) / float(response.json().get('rates').get(currentType)))
+    
+    #perform calculation: get currentType to USD, then multiply that by the translateType
+    if translateType != 'USD':
+        convertedPrice = format((float(price) / float(response.json().get('rates').get(currentType))) * float(response.json().get('rates').get(translateType)), ".2f") #format to 2 decimal places
+        return str(convertedPrice)
+    else: 
+        convertedPrice = format(float(price) / float(response.json().get('rates').get(currentType)), ".2f") #format to 2 decimal places
+        return str(convertedPrice)
     
 
 
