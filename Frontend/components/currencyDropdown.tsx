@@ -1,37 +1,81 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Dropdown } from 'react-native-material-dropdown';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 const CurrencySelector = () => {
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
-  const [isFocus, setIsFocus] = useState(false);
+  const [selectedCurrency, setSelectedCurrency] = useState("USD");
 
   const data = [
-    { value: 'USD' },
-    { value: 'EUR' },
-    { value: 'GBP' },
+    { value: "USD" },
+    { value: "EUR" },
+    { value: "GBP" },
+    { value: "JPY" },
   ];
 
   return (
-    <View style={styles.container}>
-      <Dropdown
-        label='Select Currency'
+    <Dropdown
+      style={styles.dropdown}
+      placeholderStyle={styles.placeholderStyle}
+      selectedTextStyle={styles.selectedTextStyle}
+      inputSearchStyle={styles.inputSearchStyle}
+      iconStyle={styles.iconStyle}
+      data={data}
+      search
+      maxHeight={300}
+      labelField="value"
+      valueField="value"
+      placeholder="Select item"
+      searchPlaceholder="Search..."
+      value={selectedCurrency}
+      onChange={(item) => {
+        setSelectedCurrency(item.value);
+      }}
+      renderLeftIcon={() => (
+        <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+      )}
+    />
+  );
+};
+
+const styles = StyleSheet.create({
+  dropdown: {
+    margin: 16,
+    height: 50,
+    borderBottomColor: "gray",
+    borderBottomWidth: 0.5,
+    width: "80%", // Set this to ensure it takes full width
+    paddingHorizontal: 10,
+  },
+
+  icon: {
+    marginRight: 5,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+});
+
+export default CurrencySelector;
+{
+  /* <Dropdown
+        label="Select Currency"
         data={data}
         value={selectedCurrency}
         onChangeText={(value) => setSelectedCurrency(value)}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
       />
-      <AntDesign name="down" size={24} color="black" />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-});
-
-export default CurrencySelector;
+      <AntDesign name="down" size={24} color="black" /> */
+}
