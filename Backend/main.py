@@ -47,11 +47,6 @@ async def read_item(currentType: str, translateType: str, price: str):
     # Construct the full URL with the parameters
     url = f"{baseURL}?{urlencode(params)}"
     url = url.replace('+%23+currency+API', "")
-    
-    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
-    url = url.replace('+%23+currency+API', "")
-    
-    # return ({'t': {url}, 'b': {"https://openexchangerates.org/api/latest.json?app_id=69a2849383304924b556cb86e305216b&symbols=EUR%2CGBP%2CCAD%2CPLN%2CJPY%2CCNY"}})
     # Make the request
     response = requests.get(url)
     if response.status_code != 200:
@@ -134,15 +129,20 @@ generation_config = {
   ),
   "response_mime_type": "application/json",
 }
+
 model = genai.GenerativeModel(
   model_name="gemini-1.5-flash",
   generation_config=generation_config,
 )
+
 @app.get("/productAnalysis/")
 async def gen_analysis(itemName:str, currentType: str, translateType: str, price: str):
     prompt = (f"I am buying {itemName} and I am in a region where {currentType} currency is used, the cost of {itemName} is {price} {currentType}, if I am originally from the region where {translateType} is used. Generate details of if the product is worth it considering prices of {itemName} in the region where I am from and region of {currentType} also consider comparing the price with online pricing, but take a firm bias in a string and provide an array of similar products. Finally provide a boolean of worthIt or not based on the bias")
-    response = model.generate_content(prompt)
-    return response
+    try: 
+      response = model.generate_content(prompt)
+      return {"response" : (response.text) }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}") 
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, reload=True)
