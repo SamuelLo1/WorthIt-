@@ -102,7 +102,7 @@ async def process_image(image_data: ImageData):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
     
-
+# configuring AI response and model
 genai.configure(api_key=os.getenv("GEMINI_KEY"))
 
 generation_config = {
@@ -140,7 +140,12 @@ async def gen_analysis(itemName:str, currentType: str, translateType: str, price
     prompt = (f"I am buying {itemName} and I am in a region where {currentType} currency is used, the cost of {itemName} is {price} {currentType}, if I am originally from the region where {translateType} is used. Generate details of if the product is worth it considering prices of {itemName} in the region where I am from and region of {currentType} also consider comparing the price with online pricing, but take a firm bias in a string and provide an array of similar products. Finally provide a boolean of worthIt or not based on the bias")
     try: 
       response = model.generate_content(prompt)
-      return {"response" : (response.text) }
+      json_response = json.loads(response.text)
+      return {
+            "details": json_response["details"], 
+            "worthOrNot": json_response["worthOrNot"], 
+            "similarProds": json_response["similarProds"]
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}") 
 

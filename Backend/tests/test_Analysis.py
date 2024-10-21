@@ -1,6 +1,7 @@
 import os
 import google.generativeai as genai
 from google.ai.generativelanguage_v1beta.types import content
+import json
 
 genai.configure(api_key=os.getenv("GEMINI_KEY"))
 
@@ -41,6 +42,7 @@ translateType = "USD"
 
 prompt = (f"I am buying {itemName} and I am in a region where {currentType} currency is used, the cost of {itemName} is {price} {currentType}, if I am originally from the region where {translateType} is used. Generate details of if the product is worth it considering prices of {itemName} in the region where I am from and region of {currentType} also consider comparing the price with online pricing, but take a firm bias in a string and provide an array of similar products. Finally provide a boolean of worthIt or not based on the bias")
 response = model.generate_content(prompt)
-print(response.text)
+json_response = json.loads(response.text)
+
 
 

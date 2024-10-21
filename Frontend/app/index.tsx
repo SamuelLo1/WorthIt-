@@ -69,8 +69,9 @@ const Home: React.FC<Props> = ({ navigation }) => {
     } catch (error) {
       console.error("Error:", error);
     }
-    console.log("success", exchangeRate, analysisResult);
-    console.log("details",analysisResult);
+    // console.log("success", exchangeRate, analysisResult);
+    // console.log("details",analysisResult?.details);
+    // console.log(analysisResult);
     return ;
   }
 

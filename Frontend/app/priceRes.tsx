@@ -26,11 +26,11 @@ const PriceRes: React.FC<Props> = ({ route }) => {
   const translateSymbol = priceSymbols[translateType];
   return (
     <View className="flex-1 items-center bg-red-300">
-      <View className="flex items-center space-y-6 mt-10">
+      <View className="flex items-center space-y-2 mt-10">
         <Text className="text-2xl font-bold "> Logo</Text>
         <Text className="text-2xl font-bold">Worth It: </Text>
         <Text className="text-2xl font-bold">{worthOrNot ? 'Yes' : 'No'}</Text>
-        <View className="flex items-center bg-white rounded-3xl p-10 h-1/2">
+        <View className="flex items-center bg-white rounded-3xl p-10 ">
           <Text className="text-2xl font-bold"> Current Conversion Rate: </Text>
           <Text className="text-2xl font-bold">{currentSymbol}{prevPrice} 
           <AntDesign name="arrowright" size={24} color="black" /> {translateSymbol}{conversionPrice} 
@@ -38,6 +38,11 @@ const PriceRes: React.FC<Props> = ({ route }) => {
           <Text className="text-2xl font-bold">AI Explanation: </Text>
           <Text className="text-xl">{aIExplanation}</Text>
           <Text className="text-2xl font-bold">Similar Items: </Text>
+          <View className="flex items-center space-x-2">
+            {similarItems?.map((item) => (
+              <Text className="text-xl">{item}</Text>
+            ))}
+          </View>
         </View>
       </View>
       
