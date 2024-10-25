@@ -5,9 +5,9 @@ export type RootStackParamList = {
                 translateType: string, 
                 currentType: string, 
                 prevPrice: string, 
-                aIExplanation : string,
-                similarItems : string[],
-                worthOrNot : boolean,  
+                aIExplanation : string | undefined,
+                similarItems : string[] | undefined,
+                worthOrNot : boolean | undefined,  
             };
 }; 
 

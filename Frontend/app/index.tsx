@@ -1,6 +1,6 @@
 "use client";
-import { Text, View, TextInput, TouchableOpacity, Button } from "react-native";
-import { useState } from "react";
+import { Text, View, TextInput, TouchableOpacity, Button, ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react"; 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, AnalysisResult } from "@/types/pageParams";
 import CurrencySelector from "@/components/currencyDropdown";
@@ -20,15 +20,16 @@ const Home: React.FC<Props> = ({ navigation }) => {
   const [currentType, setCurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [translateType, setTranslateType] = useState('USD'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [price, setPrice] = useState('0');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [itemName, setItemName] = useState('');
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [exchangeRate, setExchangeRate] = useState<string | null>(null);
 
-  
-
   // send price for price conversion with (price, currentType, translateType)
   // send item name to look up in store api
   const fetchData = async (currentType: string, price: string, translateType: string, itemName: string) => {
+    setLoading(true);
     try {
       // Construct the URL with query parameters
       const exchangeQuery = new URLSearchParams({
@@ -59,41 +60,39 @@ const Home: React.FC<Props> = ({ navigation }) => {
         }
       }).then((response) => response.json());
 
-      Promise.all([exchangeRateReq, analysisReq])
-        .then(([data1, data2]) => {
-          console.log(data1, data2);
-          setExchangeRate(data1);
-          setAnalysisResult(JSON.parse(data2.response));
-        })
-       
+      const [currencyData, analysisData] = await Promise.all([
+        exchangeRateReq, 
+        analysisReq
+      ]);
+      
+      const fetchedAnalysisResult: AnalysisResult = {
+        details: analysisData.details,
+        similarProds: analysisData.similarItems,
+        worthOrNot: analysisData.worthOrNot,
+      };
+
+      if (currencyData && fetchedAnalysisResult) {
+        navigation.navigate('priceRes', {
+          conversionPrice: currencyData,
+          translateType,
+          currentType,
+          prevPrice: price,
+          aIExplanation: fetchedAnalysisResult.details,
+          similarItems: fetchedAnalysisResult.similarProds,
+          worthOrNot: fetchedAnalysisResult.worthOrNot,
+        });
+      }
     } catch (error) {
       console.error("Error:", error);
+      setError("Error fetching data");
+    } finally {
+      setLoading(false);
+      return;
     }
-    // console.log("success", exchangeRate, analysisResult);
-    // console.log("details",analysisResult?.details);
-    // console.log(analysisResult);
-    return ;
   }
 
   const handleSubmit = async () => {
     await fetchData(currentType, price, translateType, itemName);
-    if (exchangeRate && analysisResult) {
-      navigation.navigate('priceRes', {
-        conversionPrice: exchangeRate,
-        translateType: translateType,
-        currentType: currentType,
-        prevPrice: price,
-        aIExplanation: analysisResult.details,
-        similarItems : analysisResult.similarProds,
-        worthOrNot : analysisResult.worthOrNot,
-      });
-    } else {
-      return (
-        <View>
-          <Text>Error</Text>
-        </View>
-      );
-    }
   };
 
   return (
