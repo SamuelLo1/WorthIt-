@@ -74,8 +74,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
       if (currencyData && fetchedAnalysisResult) {
         navigation.navigate('priceRes', {
           conversionPrice: currencyData,
-          translateType,
-          currentType,
+          translateType: translateType,
+          currentType: currentType,
           prevPrice: price,
           aIExplanation: fetchedAnalysisResult.details,
           similarItems: fetchedAnalysisResult.similarProds,
@@ -125,8 +125,17 @@ const Home: React.FC<Props> = ({ navigation }) => {
           className="w-5/8 text-2xl border-gray-200 border-2"
         />
 
+        <Text className="text-xl font-semibold">Current Currency Type:</Text>
+        <CurrencySelector 
+          setTranslateType={setCurrentType}
+          translateType={currentType}
+        />
+
         <Text className="text-xl font-semibold"> Conversion Currency Type: </Text>
-        <CurrencySelector />
+        <CurrencySelector 
+          setTranslateType={setTranslateType}
+          translateType={translateType} 
+        />
       </View>
 
       <TouchableOpacity

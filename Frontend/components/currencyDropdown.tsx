@@ -3,9 +3,14 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-const CurrencySelector = () => {
-  const [selectedCurrency, setSelectedCurrency] = useState("USD");
+interface CurrencySelectorProps {
+  setTranslateType: (value: string) => void,
+  translateType: string 
+}
 
+
+const CurrencySelector: React.FC<CurrencySelectorProps> = ({setTranslateType, translateType}) => {
+  // const [selectedCurrency, setSelectedCurrency] = useState("USD");
   const data = [
     { value: "USD" },
     { value: "EUR" },
@@ -27,9 +32,10 @@ const CurrencySelector = () => {
       valueField="value"
       placeholder="Select item"
       searchPlaceholder="Search..."
-      value={selectedCurrency}
+      value={translateType}
       onChange={(item) => {
-        setSelectedCurrency(item.value);
+        setTranslateType(item.value);
+        translateType = item.value; 
       }}
       renderLeftIcon={() => (
         <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
