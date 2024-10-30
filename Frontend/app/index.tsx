@@ -124,6 +124,9 @@ const Home: React.FC<Props> = ({ navigation }) => {
           keyboardType="numeric"
           className="w-5/8 text-2xl border-gray-200 border-2"
         />
+
+        <Text className="text-xl font-semibold"> Conversion Currency Type: </Text>
+        <CurrencySelector />
       </View>
 
       <TouchableOpacity
