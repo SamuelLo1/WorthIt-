@@ -1,8 +1,8 @@
 "use client";
-import { Text, View, TextInput, TouchableOpacity, Button } from "react-native";
-import { useState } from "react";
+import { Text, View, TextInput, TouchableOpacity, Button, ActivityIndicator } from "react-native";
+import { useState, useEffect } from "react"; 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList } from "@/types/pageParams";
+import { RootStackParamList, AnalysisResult } from "@/types/pageParams";
 import CurrencySelector from "@/components/currencyDropdown";
 
 /*
@@ -18,52 +18,81 @@ type Props = NativeStackScreenProps<RootStackParamList, 'index'>;
 
 const Home: React.FC<Props> = ({ navigation }) => {
   const [currentType, setCurrentType] = useState('JPY'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
-  const [translateType, setTranslateType] = useState('GBP'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
+  const [translateType, setTranslateType] = useState('USD'); // USD, EUR, GBP, JPY, CAD, AUD, CHF, CNY, INR, MXN
   const [price, setPrice] = useState('0');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [itemName, setItemName] = useState('');
-
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<string | null>(null);
 
   // send price for price conversion with (price, currentType, translateType)
   // send item name to look up in store api
-  const fetchData = async (currentType: string, price: string, translateType: string) => {
+  const fetchData = async (currentType: string, price: string, translateType: string, itemName: string) => {
+    setLoading(true);
     try {
       // Construct the URL with query parameters
-      const query = new URLSearchParams({
+      const exchangeQuery = new URLSearchParams({
         currentType,
         translateType,
-        price, // Convert number to string for query parameters
+        price, 
       }).toString();
-
-      const response = await fetch(`http://127.0.0.1:8000/test/?${query}`, {
-        method: "GET",
+      
+      const analysisQuery = new URLSearchParams({
+        itemName,
+        currentType,
+        translateType,
+        price,
+      }).toString();
+      
+      //fetch data
+      const exchangeRateReq = fetch(`http://127.0.0.1:8000/test?${exchangeQuery}`, {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-        },
-      });
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => response.json());
+    
+      const analysisReq = fetch(`http://127.0.0.1:8000/productAnalysis?${analysisQuery}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => response.json());
 
-      const data = await response.json();
-      return data;
+      const [currencyData, analysisData] = await Promise.all([
+        exchangeRateReq, 
+        analysisReq
+      ]);
+      
+      const fetchedAnalysisResult: AnalysisResult = {
+        details: analysisData.details,
+        similarProds: analysisData.similarItems,
+        worthOrNot: analysisData.worthOrNot,
+      };
+
+      if (currencyData && fetchedAnalysisResult) {
+        navigation.navigate('priceRes', {
+          conversionPrice: currencyData,
+          translateType,
+          currentType,
+          prevPrice: price,
+          aIExplanation: fetchedAnalysisResult.details,
+          similarItems: fetchedAnalysisResult.similarProds,
+          worthOrNot: fetchedAnalysisResult.worthOrNot,
+        });
+      }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error:", error);
+      setError("Error fetching data");
+    } finally {
+      setLoading(false);
+      return;
     }
-  };
+  }
 
   const handleSubmit = async () => {
-    const convertedCurr: string = await fetchData(currentType, price, translateType);
-    if (convertedCurr) {
-      navigation.navigate('priceRes', {
-        conversionPrice: convertedCurr,
-        translateType: translateType,
-        currentType: currentType,
-        prevPrice: price,
-      });
-    } else {
-      return (
-        <View>
-          <Text>Error</Text>
-        </View>
-      );
-    }
+    await fetchData(currentType, price, translateType, itemName);
   };
 
   return (
