@@ -105,7 +105,6 @@ export default function TestScreen() {
         onPress={() => base64Image && fetchImgText(base64Image)}
         disabled={!base64Image}
       />
-      <CurrencySelector />
     </View>
   );
 }

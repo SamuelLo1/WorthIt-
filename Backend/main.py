@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 import json
 import pytesseract
 from PIL import Image
-
+import re
 from pydantic import BaseModel
 import base64
 from io import BytesIO
@@ -88,16 +88,31 @@ async def process_image(image_data: ImageData):
         # Decode the base64 image data
         image_bytes = base64.b64decode(image_data.base64Image)
         image = Image.open(BytesIO(image_bytes))
-
         # Convert image to grayscale and resize it for better OCR
         grayscale_image = image.convert("L")
-        threshold_value = 150
+        threshold_value = 130
         binary_image = grayscale_image.point(lambda x: 0 if x < threshold_value else 255, '1')
-        resized_image = binary_image.resize((image.width * 8, image.height * 8))
+        resized_image = binary_image.resize((image.width * 2, image.height * 2))
 
         # Use pytesseract to extract text from the image
-        text = pytesseract.image_to_string(resized_image, config='--psm 11')
-        return {"extracted_text": text}
+
+        custom_config = r'--oem 3 --psm 6'
+        text = pytesseract.image_to_string(resized_image, config=custom_config)
+        match = re.search(r'([A-Za-z\s]+)\s([\$€£])(\d+(\.\d{2})?)', text)
+        if match:
+            product_name = match.group(1).strip()
+            currency = match.group(2)
+            price = match.group(3)
+        else: 
+            product_name = None
+            currency = None
+            price = None
+
+        return ({"extracted_text": text,
+                "product_name": product_name,
+                "currency": currency,
+                "price": price
+                })
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
