@@ -1,5 +1,5 @@
 "use client";
-import { Text, View, TextInput, TouchableOpacity, Button, ActivityIndicator } from "react-native";
+import { Text, Image, View, TextInput, TouchableOpacity, Button, ActivityIndicator } from "react-native";
 import { useState, useEffect } from "react"; 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, AnalysisResult } from "@/types/pageParams";
@@ -104,9 +104,10 @@ const Home: React.FC<Props> = ({ navigation }) => {
         title="Go to Test Screen"
         onPress={()=> {navigation.navigate('test')}} // Navigate to Test Screen
       />
-      <Text className="items-center justify-center text-2xl text-blue-500">
-        Worth It
-      </Text>
+      <Image
+        source={require("../public/logo.png")}
+        className="width-1/5 height-1/5 border-2 border-gray-200"
+      />
       <View className="border-2 border-gray-200 rounded-lg p-4 w-full space-y-4">
         <Text className="text-xl font-semibold">Item Name:</Text>
         <TextInput
